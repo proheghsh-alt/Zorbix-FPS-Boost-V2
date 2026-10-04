@@ -30,18 +30,21 @@ jobs:
           mkdir project
           unzip -q *.zip -d project
 
-      - name: Find project directory
-        run: |
-          echo "Project contents:"
-          find project -maxdepth 3 -type f | head -50
-
       - name: Build mod
-        working-directory: project
         run: |
+          PROJECT_DIR=$(find project -name "settings.gradle" -type f -print -quit | xargs dirname)
+
+          echo "======================================"
+          echo "Zorbix project found:"
+          echo "$PROJECT_DIR"
+          echo "======================================"
+
+          cd "$PROJECT_DIR"
+
           gradle build --no-daemon
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
           name: Zorbix-FPS-Boost-V2
-          path: project/build/libs/*.jar
+          path: project/**/build/libs/*.jar
